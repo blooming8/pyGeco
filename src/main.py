@@ -20,7 +20,8 @@ def main():
         # scarica consuntivo
         print("\nSto scaricando il consuntivo da Geco...\n")
         if not scraper.download_file():
-            print("\n")
+            print("\n>> DOWNLOAD ERROR <<")
+            sys.exit(0)
         print("\nConsuntivo scaricato.\n")
 
         # invia consuntivo

@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from users import GecoUser, OutlookUser
+import chromedriver_autoinstaller
 from bs4 import BeautifulSoup
 import yagmail
 import requests
@@ -17,27 +18,41 @@ class Scraper:
     def __init__(self):
         self.server = "outlook.office365.com"
         self.porta = 587
-        self.credenziali = {"username": GecoUser().get_username(), "password": GecoUser().get_psw()}
+        self.user = GecoUser()
+        self.credenziali = {"username": self.user.get_username(), "password": self.user.get_psw()}
 
     # def __del__(self):
     #     self.browser.quit()
 
   
     def login(self) -> bool:
-        response = requests.Session().post(url= "https://sts3.reply.eu/adfs/ls/?wa=wsignin1.0&wtrealm=https%3a%2f%2fgeco.reply.com&wctx=rm%3d0%26id%3dpassive%26ru%3d%252f&wct=2023-10-23T16%3a29%3a51Z#t", data= self.credenziali)
-        if response.status_code != 200:
+        url = "https://sts3.reply.eu/adfs/ls/?wa=wsignin1.0&wtrealm=https%3a%2f%2fgeco.reply.com&wctx=rm%3d0%26id%3dpassive%26ru%3d%252f&wct=2023-10-23T16%3a29%3a51Z#t"
+        response = requests.Session().post(url= url, data= self.credenziali)
+        if response.ok is False:
             return False  
         return True
     
 
     def download_file(self) -> bool:
-        response = requests.Session().get(url= "https://geco.reply.com/#t/timesheet/compiling:~:text=RIEPILOGO%20CLIENTE%20ADV-,RAPPORTO,-MENSILE")
-        if response.status_code != 200:
-            return False
-        with open("timereporting.xs", "wb") as download:
-            download.write(response.content)
-            self.sposta_file(download)
-        return True 
+        try:
+            url = "https://geco.reply.com/?downloadformat=.xs#t"
+            params = {"downloadformat": ".xs"}
+            size = 10 * 1024
+
+            response = requests.Session().get(url= url, params= params, stream= True)
+            if response.ok is False:
+                return False
+            
+            print(response.content)
+            with open("x.js", "wb") as x:
+                x.write(response.content)
+
+            with open("consuntivi/timereporting.xs", "wb") as download:
+                for chunk in response.iter_content(chunk_size= size):
+                   download.write(chunk)
+            return True 
+        except Exception as exception:
+            print(exception)
 
 
     def sposta_file(self, download: any) -> None:
@@ -45,7 +60,7 @@ class Scraper:
         if not os.path.exists(folder):
             os.mkdir(folder)
             print("\nCartella 'consuntivi' creata\n")
-        shutil.move(os.path.realpath(download.name), folder)
+        #shutil.move(os.path.realpath(download.name), folder)
         print("\nFile spostato in 'consuntivi'.\n")
 
 
@@ -62,6 +77,8 @@ class Scraper:
             print(exception)
 
 
+    def pulisci_cartella() -> None:
+        pass
 
 
 # class Connection:
