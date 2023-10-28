@@ -37,12 +37,17 @@ class Scraper:
     def login(self) -> None:
         try:
             url = "https://sts3.reply.eu/adfs/ls/?wa=wsignin1.0&wtrealm=https%3a%2f%2fgeco.reply.com&wctx=rm%3d0%26id%3dpassive%26ru%3d%252f&wct=2023-10-23T16%3a29%3a51Z#t"
+            username_txtfield: tuple = (By.ID, "userNameInput")
+            psw_txtfield: tuple = (By.ID, "userNameInput")
+            submit_btn: tuple = (By.ID, "submitButton")
+            wait_time: int = 10
+
             self.browser.get(url)
-            WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, "userNameInput")))
-            self.browser.find_element(By.ID, "userNameInput").send_keys("a.liveli@reply.it")
-            WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, "passwordInput")))
-            self.browser.find_element(By.ID, "passwordInput").send_keys("BMed2023!!")
-            WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, "submitButton")))
+            WebDriverWait(self.browser, wait_time).until(EC.presence_of_element_located(username_txtfield))
+            self.browser.find_element(By.ID, "userNameInput").send_keys(self.user.get_username())
+            WebDriverWait(self.browser, wait_time).until(EC.presence_of_element_located(psw_txtfield))
+            self.browser.find_element(By.ID, "passwordInput").send_keys(self.user.get_psw())
+            WebDriverWait(self.browser, wait_time).until(EC.presence_of_element_located(submit_btn))
             self.browser.find_element(By.ID, "submitButton").click()
 
             url = "https://geco.reply.com/WebServiceAD/GeCo.asmx/AppIn"
@@ -66,7 +71,7 @@ class Scraper:
 
     def sposta_file(self, download: any) -> None:
         try:
-            folder = os.path.realpath("consuntivi")
+            folder: str = os.path.realpath("consuntivi")
             if not os.path.exists(folder):
                 os.mkdir(folder)
                 print("\nCartella 'consuntivi' creata.\n")
