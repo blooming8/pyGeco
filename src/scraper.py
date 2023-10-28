@@ -26,8 +26,6 @@ class Scraper:
         self.credenziali = {"username": self.user.get_username(), "password": self.user.get_psw()}
 
         options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpi")
         self.browser = webdriver.Chrome(service= ChromeService(ChromeDriverManager().install()), options= options) 
 
 
@@ -53,31 +51,21 @@ class Scraper:
             else:
                 print("login error")
         except Exception as exception:
-            print(exception)
+            raise exception
 
     
-
-    def download_file(self) -> bool:
+    def download_file(self) -> None:
         try:   
-
             self.browser.get("https://geco.reply.com/#t/timesheet/compiling")
-            link = self.browser.find_element(By.LINK_TEXT, "Rapporto Mensile")
-            print(link.tag_name)
+            WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Rapporto Mensile")))
+            self.browser.find_element(By.LINK_TEXT, "Rapporto Mensile").click()
 
-            # for elems in browser.find_elements(By.CLASS_NAME, "timesheet-report"):
-            #     for elem in elems:
-            #         heading = elem.find_element(By.ID, "btn-month-extr").click()
-            with open("consuntivi/y.xs", "wb") as download:
+            with open("consuntivi/consuntivo.xs", "wb") as download:
                 download.write(link.text)
 
-            # soup = BeautifulSoup(html, "html.parser")
-            # links = soup.find("button", {"class": "timsheet-report"})
-            # for link in links:
-            #     print(link.text)
-
         except Exception as exception:
-            print(exception)
-        return True 
+            raise exception
+        
 
     def sposta_file(self, download: any) -> None:
         folder = os.path.realpath("consuntivi")

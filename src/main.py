@@ -12,12 +12,10 @@ def main():
         print("\nSto facendo il login su Geco...\n")
         scraper.login()
 
-        # # scarica consuntivo
-        # print("\nSto scaricando il consuntivo da Geco...\n")
-        # if not scraper.download_file():
-        #     print("\n>> DOWNLOAD ERROR <<")
-        #     sys.exit(0)
-        # print("\nConsuntivo scaricato.\n")
+        # scarica consuntivo
+        print("\nSto scaricando il consuntivo da Geco...\n")
+        scraper.download_file()
+        print("\nConsuntivo scaricato.\n")
 
         # # invia consuntivo
         # print("\nSto inviando il file a Bit Spa...\n")
