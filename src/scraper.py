@@ -12,6 +12,7 @@ import yagmail
 import requests
 import shutil
 import os 
+import re
 import time 
 import js2py
 import execjs
@@ -59,21 +60,20 @@ class Scraper:
             self.browser.get("https://geco.reply.com/#t/timesheet/compiling")
             WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Rapporto Mensile")))
             self.browser.find_element(By.LINK_TEXT, "Rapporto Mensile").click()
-
-            with open("consuntivi/consuntivo.xs", "wb") as download:
-                download.write(link.text)
-
         except Exception as exception:
             raise exception
         
 
     def sposta_file(self, download: any) -> None:
-        folder = os.path.realpath("consuntivi")
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-            print("\nCartella 'consuntivi' creata\n")
-        #shutil.move(os.path.realpath(download.name), folder)
-        print("\nFile spostato in 'consuntivi'.\n")
+        try:
+            folder = os.path.realpath("consuntivi")
+            if not os.path.exists(folder):
+                os.mkdir(folder)
+                print("\nCartella 'consuntivi' creata.\n")
+            
+            print("\nFile spostato in 'consuntivi'.\n")
+        except Exception as exception:
+            raise exception
 
 
     def invia_file(self) -> None:
@@ -82,7 +82,6 @@ class Scraper:
         mail = Mail()
 
         try:
-            mittente = OutlookUser()
             with yagmail.SMTP(mittente.get_username(), mittente.get_psw()) as smtp:
                 smtp.send(destinatari, mail.get_oggetto(), mail.get_corpo(), mail.get_file_path())
         except Exception as exception:
@@ -90,7 +89,9 @@ class Scraper:
 
 
     def pulisci_cartella() -> None:
-        pass
+        if os.getcwd() != "consuntivi":
+            os.chdir("consuntivi")
+        _ = [os.remove(file) for file in os.walk(os.getwcd())]
 
 
 # class Connection:

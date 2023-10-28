@@ -8,6 +8,9 @@ def main():
     try:
         scraper = Scraper()
 
+        # cancella i consuntivi vecchi
+        scraper.pulisci_cartella()
+
         # login 
         print("\nSto facendo il login su Geco...\n")
         scraper.login()
@@ -15,16 +18,16 @@ def main():
         # scarica consuntivo
         print("\nSto scaricando il consuntivo da Geco...\n")
         scraper.download_file()
+        scraper.sposta_file()
         print("\nConsuntivo scaricato.\n")
 
-        # # invia consuntivo
-        # print("\nSto inviando il file a Bit Spa...\n")
-        # scraper.invia_file()
-        # print("\nFile inviato con successo.\n")
+        # invia consuntivo
+        print("\nSto inviando il file a Bit Spa...\n")
+        scraper.invia_file()
+        print("\nFile inviato con successo.\n")
 
     except Exception as exception:
-        print(exception)
-        traceback.print_exc()
+        traceback.print_exception()
 
     finally:
         print("\nProgramma terminato.\n")
