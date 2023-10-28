@@ -27,7 +27,7 @@ def main():
         print("\nFile inviato con successo.\n")
 
     except Exception as exception:
-        traceback.print_exception()
+        traceback.print_exc()
 
     finally:
         print("\nProgramma terminato.\n")

@@ -19,7 +19,7 @@ import execjs
 
 
 class Scraper:
-
+    
     def __init__(self):
         self.server = "outlook.office365.com"
         self.porta = 587
@@ -30,10 +30,6 @@ class Scraper:
         self.browser = webdriver.Chrome(service= ChromeService(ChromeDriverManager().install()), options= options) 
 
 
-    # def __del__(self):
-    #     self.browser.quit()
-
-  
     def login(self) -> None:
         try:
             url = "https://sts3.reply.eu/adfs/ls/?wa=wsignin1.0&wtrealm=https%3a%2f%2fgeco.reply.com&wctx=rm%3d0%26id%3dpassive%26ru%3d%252f&wct=2023-10-23T16%3a29%3a51Z#t"
@@ -63,12 +59,14 @@ class Scraper:
             raise exception
         
 
-    def sposta_file(self, download: any) -> None:
+    def sposta_file(self) -> None:
         try:
             if not os.path.exists(self.folder):
                 os.mkdir(self.folder)
                 print(f"\nCartella '{self.folder}' creata.\n")
-            shutil.move(os.getcwd(), self.folder)
+            if re.match("", ""):
+                pass
+            shutil.move(os.path.realpath(_), self.folder)
             print(f"\nFile spostato in '{self.folder}'.\n")
         except Exception as exception:
             raise exception
@@ -92,8 +90,9 @@ class Scraper:
             print(exception)
 
 
-    def pulisci_cartella() -> None:
-        if os.getcwd() != self.folder:
+    def pulisci_cartella(self) -> None:
+        if os.getcwd() != self.folder and not self.folder.exists():
+            os.mkdir(self.folder)
             os.chdir(self.folder)
         _ = [os.remove(consuntivo) for _, _, consuntivo in os.walk(os.getwcd())]
 
